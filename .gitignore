@@ -3,3 +3,7 @@
 bin/Boggle/BoggleClient.class
 bin/Boggle/BoggleMain.class
 json-20160212.jar
+bin/boggle/BoggleGUI$1.class
+*.class
+jgoodies-forms-1.8.0.jar
+jgoodies-forms-1.8.0-sources.jar

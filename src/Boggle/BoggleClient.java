@@ -1,4 +1,4 @@
-package Boggle;
+package boggle;
 
 import org.json.JSONObject;
 
