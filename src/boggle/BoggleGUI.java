@@ -2,6 +2,8 @@ package boggle;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.swing.*;
@@ -18,6 +20,7 @@ public class BoggleGUI extends JFrame {
 	private JTextField wordGuessed;
 	private JButton[] gameDice = new JButton[16];
 	private Socket socket;
+	private JTextArea chatOutput, chatInput;
 
 
 	/**
@@ -101,7 +104,7 @@ public class BoggleGUI extends JFrame {
 		ScrollPane chatScrollPane = new ScrollPane();
 		chatPanel.add(chatScrollPane);
 		
-		JTextArea chatOutput = new JTextArea();
+		chatOutput = new JTextArea();
 		chatOutput.setBackground(new Color(240, 255, 255));
 		chatScrollPane.add(chatOutput);
 		chatOutput.setSize(getMaximumSize().width, 500);
@@ -114,7 +117,7 @@ public class BoggleGUI extends JFrame {
 		chatPanel.add(inputPanel);
 		inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.X_AXIS));
 		
-		JTextArea chatInput = new JTextArea();
+		chatInput = new JTextArea();
 		inputPanel.add(chatInput);
 		chatInput.setMaximumSize(new Dimension(600, 500));
 		chatInput.setMinimumSize((new Dimension(600, 500)));
@@ -124,6 +127,11 @@ public class BoggleGUI extends JFrame {
 		inputPanel.add(chatSend);
 		
 		this.setVisible(true);
+	}
+	
+	public void addChat(String chatMessage) {
+		
+		chatOutput.append(chatMessage);
 	}
 	
 	private class ChatAction extends AbstractAction {
@@ -136,7 +144,13 @@ public class BoggleGUI extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
+			try {
+				PrintWriter writer = new PrintWriter(socket.getOutputStream());
+			} catch (IOException e1) {
+				chatOutput.append("Unable to send chat messege");
+				e1.printStackTrace();
+			}
+			
 		}
 
 	}
