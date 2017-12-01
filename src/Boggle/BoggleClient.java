@@ -85,7 +85,7 @@ public class BoggleClient {
 								break;
 							
 							default: 
-								gui.addChat("Failed to get action");
+								gui.addChat("Failed to get action" + message.optString("action"));
 							}
 						}
 						

@@ -18,43 +18,43 @@ public class JSONConverter {
 	public static String getChatMessage(String message) {
 
 		JSONObject chatMessage = new JSONObject();
-		chatMessage.put("type", "chat");
+		chatMessage.put("action", "Chat");
 		chatMessage.put("message", message);
-		return chatMessage.toString();
+		JSONObject wrappedPlayMessage = wrapApplicationMessage(chatMessage);
+		return wrappedPlayMessage.toString();
 
 	}
-	
+
 	public static String getPlaytMessage() {
 
 		JSONObject playMessage = new JSONObject();
-		playMessage.put("module", "Boggle_Of_Epicness");
-		playMessage.put("action","PLAY");
+		playMessage.put("action", "PLAY");
 		JSONObject wrappedPlayMessage = wrapApplicationMessage(playMessage);
 		return wrappedPlayMessage.toString();
 
 	}
 	
-	
+	public static String getGuesstMessage(int[] positions) {
 
-	private static JSONObject wrapType(String type) {
-		JSONObject wrappedInType = new JSONObject();
-		wrappedInType.put("type", type);
-		return wrappedInType;
+		JSONObject guessMessage = new JSONObject();
+		guessMessage.put("action", "GUESS");
+		JSONArray p = new JSONArray();
+		for(int i = 0; i < positions.length; i++) {
+			p.put(positions[i]);
+		}
+		guessMessage.put("positions", p);
+		JSONObject wrappedGuessMessage = wrapApplicationMessage(guessMessage);
+		return wrappedGuessMessage.toString();
+
 	}
 
 	private static JSONObject wrapApplicationMessage(JSONObject module) {
 		JSONObject wrappedInApplicattion = new JSONObject();
-		wrappedInApplicattion.put("type","application");
+		module.put("module", "Boggle_Of_Epicness");
+		wrappedInApplicattion.put("type", "application");
 		wrappedInApplicattion.put("message", module);
-		
-		
+
 		return wrappedInApplicattion;
-	}
-
-	private JSONObject wrapApprlicationMessage(JSONObject object) {
-
-		return object;
-
 	}
 
 	public static boolean verifyLogin(String loginResponse) {
@@ -67,10 +67,11 @@ public class JSONConverter {
 		return false;
 
 	}
-	
-	public static void main(String args[])
-	{
-		System.out.println(getChatMessage("Hello World")); 
+
+	public static void main(String args[]) {
+		System.out.println(getChatMessage("Hello World"));
 		System.out.println(getPlaytMessage());
+		int[] positions = {4,5,6,7};
+		System.out.println(getGuesstMessage(positions));
 	}
 }

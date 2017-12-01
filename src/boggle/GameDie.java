@@ -1,5 +1,7 @@
 package boggle;
 
+import java.awt.Color;
+
 import javax.swing.*;
 
 public class GameDie extends JButton{
@@ -9,7 +11,9 @@ public class GameDie extends JButton{
 	private char letter;
 
 	public GameDie(int p) {
-		position = p;		
+		position = p;
+		this.setOpaque(true);
+		this.setBackground(new Color(100, 149, 237));
 	}
 
 	public char getLetter() {
