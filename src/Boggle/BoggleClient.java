@@ -1,9 +1,6 @@
 package boggle;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.*;
 import org.json.*;
 
@@ -24,7 +21,13 @@ public class BoggleClient {
 			output.flush();
 			String message = input.readLine();
 			System.out.println(message);
-			gui.addChat(input.readLine());
+			if (JSONConverter.verifyLogin(message)) {
+				gui.addChat("Connected\n");
+				new Thread(new InputHandler(input)).start();
+			} else {
+				gui.addChat("User already connected\n");
+				close();
+			}
 
 		} catch (IOException e) {
 			gui.addChat("Connection Failed");
@@ -70,7 +73,24 @@ public class BoggleClient {
 			try {
 				while (!socket.isClosed() && socket.isConnected() && !Thread.interrupted()) {
 					String newMessage = input.readLine();
-					gui.addChat(newMessage);
+					gui.addChat(newMessage + "\n");
+					System.out.println(newMessage);
+					if(newMessage != null) {
+						JSONObject message = new JSONObject(newMessage);
+						if (message.optString("type") != null && message.optString("type").equals("application")){
+							
+							switch (message.optString("action")) {
+							case("CHAT"):
+								gui.addChat(message.optString("chatMessage"));
+								break;
+							
+							default: 
+								gui.addChat("Failed to get action");
+							}
+						}
+						
+						
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
