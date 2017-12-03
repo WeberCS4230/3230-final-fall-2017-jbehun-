@@ -36,14 +36,15 @@ public class BoggleGUI extends JFrame {
 		gameTimer = new Timer(1000, new GameTimer());
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 567, 581);
+		setBounds(200, 200, 569, 583);
 		mainPanel = new JPanel();
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(mainPanel);
 		mainPanel.setLayout(null);
 
 		JPanel bogglePanel = new JPanel();
-		bogglePanel.setBounds(0, 0, 546, 291);
+		bogglePanel.setBackground(new Color(176, 196, 222));
+		bogglePanel.setBounds(0, 0, 546, 298);
 		mainPanel.add(bogglePanel);
 		bogglePanel.setLayout(new BorderLayout(1, 1));
 
@@ -58,11 +59,14 @@ public class BoggleGUI extends JFrame {
 		gameBoard.setLayout(new GridLayout(0, 4, 0, 0));
 
 		JPanel wordPanel = new JPanel();
+		wordPanel.setBackground(new Color(176, 196, 222));
 		gameArea.add(wordPanel, BorderLayout.SOUTH);
 		wordPanel.setLayout(new BoxLayout(wordPanel, BoxLayout.X_AXIS));
 
 		timerText = new JLabel();
-		timerText.setPreferredSize(new Dimension(50, 50));
+		timerText.setBackground(new Color(176, 196, 222));
+		timerText.setOpaque(true);
+		timerText.setPreferredSize(new Dimension(70, 60));
 		timerText.setMinimumSize(new Dimension(40, 0));
 		timerText.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		timerText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -70,6 +74,7 @@ public class BoggleGUI extends JFrame {
 		wordPanel.add(timerText);
 
 		wordGuessed = new JTextField();
+		wordGuessed.setBorder(new LineBorder(new Color(171, 173, 179), 2));
 		wordGuessed.setForeground(new Color(255, 255, 255));
 		wordGuessed.setBackground(new Color(176, 224, 230));
 		wordGuessed.setEditable(false);
@@ -80,17 +85,18 @@ public class BoggleGUI extends JFrame {
 		wordPanel.add(gameButtonPanel);
 
 		JButton submit = new JButton("Submit");
-		submit.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		submit.setPreferredSize(new Dimension(73, 50));
+		submit.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		submit.setPreferredSize(new Dimension(75, 55));
 		submit.addActionListener(new SubmitActionListener());
 		gameButtonPanel.add(submit);
 
 		JButton play = new JButton("Play");
-		play.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		play.setPreferredSize(new Dimension(55, 45));
+		play.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		play.setPreferredSize(new Dimension(70, 55));
 		gameButtonPanel.add(play);
 
 		title = new JTextField();
+		title.setPreferredSize(new Dimension(6, 40));
 		title.setForeground(new Color(255, 255, 255));
 		title.setBackground(new Color(0, 0, 255));
 		title.setHorizontalAlignment(SwingConstants.CENTER);
@@ -101,10 +107,14 @@ public class BoggleGUI extends JFrame {
 		play.addActionListener(new PlayActionListener());
 
 		JPanel guessedWordPanel = new JPanel();
+		guessedWordPanel.setBackground(new Color(176, 224, 230));
 		bogglePanel.add(guessedWordPanel, BorderLayout.EAST);
 		guessedWordPanel.setLayout(new BoxLayout(guessedWordPanel, BoxLayout.Y_AXIS));
 
 		JLabel guessedLabel = new JLabel("Guessed Words");
+		guessedLabel.setOpaque(true);
+		guessedLabel.setForeground(Color.BLUE);
+		guessedLabel.setPreferredSize(new Dimension(130, 25));
 		guessedLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		guessedLabel.setBackground(new Color(173, 216, 230));
 		guessedLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -115,18 +125,21 @@ public class BoggleGUI extends JFrame {
 		guessedWordPanel.add(guessedWordScrollPane);
 
 		JTextArea guessedWords = new JTextArea();
+		guessedWords.setPreferredSize(new Dimension(120, 22));
 		guessedWords.setEditable(false);
 		guessedWordScrollPane.add(guessedWords);
 
 		JPanel chatPanel = new JPanel();
 		chatPanel.setBounds(0, 297, 546, 237);
 		mainPanel.add(chatPanel);
-		chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
+		chatPanel.setLayout(new BorderLayout(0, 0));
 
 		ScrollPane chatScrollPane = new ScrollPane();
-		chatPanel.add(chatScrollPane);
+		chatPanel.add(chatScrollPane, BorderLayout.CENTER);
 
 		chatOutput = new JTextArea();
+		chatOutput.setFont(new Font("Monospaced", Font.PLAIN, 16));
+		chatOutput.setBorder(new EmptyBorder(1, 5, 1, 5));
 		chatOutput.setEditable(false);
 		chatOutput.setBackground(new Color(240, 255, 255));
 		chatScrollPane.add(chatOutput);
@@ -135,17 +148,21 @@ public class BoggleGUI extends JFrame {
 		JPanel inputPanel = new JPanel();
 		inputPanel.setBackground(new Color(240, 255, 255));
 		inputPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		chatPanel.add(inputPanel);
-		inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.X_AXIS));
+		chatPanel.add(inputPanel, BorderLayout.SOUTH);
+		inputPanel.setLayout(new BorderLayout(0, 0));
 
 		chatInput = new JTextArea();
+		chatInput.setFont(new Font("Monospaced", Font.PLAIN, 14));
+		chatInput.setBorder(new EmptyBorder(1, 5, 1, 5));
+		chatInput.setPreferredSize(new Dimension(40, 60));
 		inputPanel.add(chatInput);
-		chatInput.setMaximumSize(new Dimension(600, 500));
-		chatInput.setMinimumSize((new Dimension(600, 500)));
+		chatInput.setMaximumSize(new Dimension(600, 100));
+		chatInput.setMinimumSize(new Dimension(600, 100));
 
 		Action ctrlEnter = new ChatAction("Send");
 		JButton chatSend = new JButton(ctrlEnter);
-		inputPanel.add(chatSend);
+		chatSend.setPreferredSize(new Dimension(90, 50));
+		inputPanel.add(chatSend, BorderLayout.EAST);
 		
 		InputMap imap = chatPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 		imap.put(KeyStroke.getKeyStroke("ctrl ENTER"), "addText");
