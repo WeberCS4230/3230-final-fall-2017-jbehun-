@@ -73,7 +73,6 @@ public class BoggleClient {
 			try {
 				while (!socket.isClosed() && socket.isConnected() && !Thread.interrupted()) {
 					String newMessage = input.readLine();
-					gui.addChat(newMessage + "\n");
 					System.out.println(newMessage);
 					if (newMessage != null) {
 						JSONObject action = JSONConverter.getApplicationMessage(newMessage);
@@ -83,10 +82,14 @@ public class BoggleClient {
 								gui.addChat(action.optString("chatMessage") + "\n");
 								break;
 							case ("STARTGAME"):
+								gui.startGameTimer();
 								break;
 							case ("GAMEEND"):
+								gui.stoptGameTimer();
 								break;
 							case ("POINTS"):
+								break;
+							case ("WORD"):
 								break;
 							default:
 								gui.addChat("Failed to get action: " + action + "\n");

@@ -2,26 +2,24 @@ package boggle;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import javax.swing.*;
 import javax.swing.border.*;
 
 public class BoggleGUI extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel mainPanel;
-	private JLabel TimerText;
+	private JLabel timerText;
 	private JTextField wordGuessed;
 	private JButton[] gameDice = new JButton[16];
 	private Socket socket;
 	private JTextArea chatOutput, chatInput;
 	private JTextField title;
-	PrintWriter output;
+	private Timer gameTimer;
+	private int timer;
+	private PrintWriter output;
 
 	/**
 	 * Create the frame.
@@ -34,6 +32,8 @@ public class BoggleGUI extends JFrame {
 			chatOutput.append("Failed to create gui output");
 			e.printStackTrace();
 		}
+
+		gameTimer = new Timer(1000, new GameTimer());
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 567, 581);
@@ -61,13 +61,13 @@ public class BoggleGUI extends JFrame {
 		gameArea.add(wordPanel, BorderLayout.SOUTH);
 		wordPanel.setLayout(new BoxLayout(wordPanel, BoxLayout.X_AXIS));
 
-		TimerText = new JLabel();
-		TimerText.setPreferredSize(new Dimension(50, 50));
-		TimerText.setMinimumSize(new Dimension(40, 0));
-		TimerText.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		TimerText.setHorizontalAlignment(SwingConstants.CENTER);
-		TimerText.setText("60");
-		wordPanel.add(TimerText);
+		timerText = new JLabel();
+		timerText.setPreferredSize(new Dimension(50, 50));
+		timerText.setMinimumSize(new Dimension(40, 0));
+		timerText.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		timerText.setHorizontalAlignment(SwingConstants.CENTER);
+		timerText.setText("60");
+		wordPanel.add(timerText);
 
 		wordGuessed = new JTextField();
 		wordGuessed.setForeground(new Color(255, 255, 255));
@@ -127,8 +127,10 @@ public class BoggleGUI extends JFrame {
 		chatPanel.add(chatScrollPane);
 
 		chatOutput = new JTextArea();
+		chatOutput.setEditable(false);
 		chatOutput.setBackground(new Color(240, 255, 255));
 		chatScrollPane.add(chatOutput);
+
 
 		JPanel inputPanel = new JPanel();
 		inputPanel.setBackground(new Color(240, 255, 255));
@@ -144,6 +146,11 @@ public class BoggleGUI extends JFrame {
 		Action ctrlEnter = new ChatAction("Send");
 		JButton chatSend = new JButton(ctrlEnter);
 		inputPanel.add(chatSend);
+		
+		InputMap imap = chatPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		imap.put(KeyStroke.getKeyStroke("ctrl ENTER"), "addText");
+		ActionMap amap = chatPanel.getActionMap();
+		amap.put("addText", ctrlEnter);
 
 		for (int i = 0; i < 16; i++) {
 			GameDie button = new GameDie(i);
@@ -156,7 +163,17 @@ public class BoggleGUI extends JFrame {
 
 	public void addChat(String chatMessage) {
 
-		chatOutput.append(chatMessage);
+		chatOutput.append(chatMessage + "\n");
+	}
+
+	public void startGameTimer() {
+		gameTimer.start();
+		timer = 60;
+		timerText.setText(String.valueOf(timer));
+	}
+
+	public void stoptGameTimer() {
+		gameTimer.stop();
 	}
 
 	private class ChatAction extends AbstractAction {
@@ -197,11 +214,21 @@ public class BoggleGUI extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int[] positions = { 1, 2, 3, 4 };
+			int[] positions = { 8, 4, 1 };
 			output.write(JSONConverter.getGuesstMessage(positions) + "\n");
 			output.flush();
 			chatOutput.append(JSONConverter.getGuesstMessage(positions) + "\n");
 		}
 
+	}
+
+	private class GameTimer implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+
+			timer--;
+			timerText.setText(String.valueOf(timer));
+		}
 	}
 }
