@@ -84,7 +84,7 @@ public class JSONConverter {
 		if (chatMessage.optString("module").equals("Boggle_Of_Epicness")) {
 			return chatMessage.optString("username") + ": " + chatMessage.optString("message");
 		}else if(chatMessage.optString("module").equals("")) {
-			return chatMessage.optString("chatMessage");
+			return chatMessage.optString("chatMessage").replace("User", "").trim();
 		}
 		return "Failed to get chat message";
 		
