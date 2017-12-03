@@ -75,21 +75,23 @@ public class BoggleClient {
 					String newMessage = input.readLine();
 					gui.addChat(newMessage + "\n");
 					System.out.println(newMessage);
-					if(newMessage != null) {
-						JSONObject message = new JSONObject(newMessage);
-						if (message.optString("type") != null && message.optString("type").equals("application")){
-							
-							switch (message.optString("action")) {
-							case("CHAT"):
-								gui.addChat(message.optString("chatMessage"));
+					if (newMessage != null) {
+						JSONObject action = JSONConverter.getApplicationMessage(newMessage);
+						if (action != null) {
+							switch (action.optString("action")) {
+							case ("CHAT"):
+								gui.addChat(action.optString("chatMessage") + "\n");
 								break;
-							
-							default: 
-								gui.addChat("Failed to get action" + message.optString("action"));
+							case ("STARTGAME"):
+								break;
+							case ("GAMEEND"):
+								break;
+							case ("POINTS"):
+								break;
+							default:
+								gui.addChat("Failed to get action: " + action + "\n");
 							}
 						}
-						
-						
 					}
 				}
 			} catch (IOException e) {

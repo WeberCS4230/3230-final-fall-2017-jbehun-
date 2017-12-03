@@ -69,7 +69,6 @@ public class BoggleGUI extends JFrame {
 		TimerText.setText("60");
 		wordPanel.add(TimerText);
 
-
 		wordGuessed = new JTextField();
 		wordGuessed.setForeground(new Color(255, 255, 255));
 		wordGuessed.setBackground(new Color(176, 224, 230));
@@ -198,7 +197,7 @@ public class BoggleGUI extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int[] positions = {1,2,3,4};  
+			int[] positions = { 1, 2, 3, 4 };
 			output.write(JSONConverter.getGuesstMessage(positions) + "\n");
 			output.flush();
 			chatOutput.append(JSONConverter.getGuesstMessage(positions) + "\n");
