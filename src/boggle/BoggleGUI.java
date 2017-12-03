@@ -19,15 +19,20 @@ public class BoggleGUI extends JFrame {
 	private JTextArea chatOutput, chatInput;
 	private Timer gameTimer;
 	private int timer;
+	private String name;
 	private PrintWriter output;
 	private ArrayList<Integer> positionList = new ArrayList<Integer>();
+	private JRadioButton serverChat, gameChat;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	/**
 	 * Create the frame.
 	 */
-	public BoggleGUI(Socket s) {
+	public BoggleGUI(String n, Socket s) {
 
 		socket = s;
+		name = n;
+
 		try {
 			output = new PrintWriter(socket.getOutputStream());
 		} catch (IOException e) {
@@ -138,20 +143,7 @@ public class BoggleGUI extends JFrame {
 		mainPanel.add(chatPanel);
 		chatPanel.setLayout(new BorderLayout(0, 0));
 
-
-		chatOutput = new JTextArea();
-		chatOutput.setFont(new Font("Monospaced", Font.PLAIN, 16));
-		chatOutput.setBorder(new EmptyBorder(1, 5, 1, 5));
-		chatOutput.setEditable(false);
-		chatOutput.setAutoscrolls(true);
-		chatOutput.setLineWrap(true);
-		chatOutput.setBackground(new Color(245, 255, 250));
-		DefaultCaret caret = (DefaultCaret) chatOutput.getCaret();
-		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-
 		JScrollPane chatScrollPane;
-		chatScrollPane= new JScrollPane(chatOutput);
-		chatPanel.add(chatScrollPane, BorderLayout.CENTER);
 
 		JPanel inputPanel = new JPanel();
 		inputPanel.setBackground(new Color(240, 255, 255));
@@ -169,8 +161,38 @@ public class BoggleGUI extends JFrame {
 
 		Action ctrlEnter = new ChatAction("Send");
 		JButton chatSend = new JButton(ctrlEnter);
-		chatSend.setPreferredSize(new Dimension(90, 50));
+		chatSend.setPreferredSize(new Dimension(100, 50));
 		inputPanel.add(chatSend, BorderLayout.EAST);
+
+		JPanel outputPanel = new JPanel();
+		chatPanel.add(outputPanel, BorderLayout.CENTER);
+
+		chatOutput = new JTextArea();
+		chatOutput.setFont(new Font("Monospaced", Font.PLAIN, 16));
+		chatOutput.setBorder(new EmptyBorder(1, 5, 1, 5));
+		chatOutput.setEditable(false);
+		chatOutput.setAutoscrolls(true);
+		chatOutput.setLineWrap(true);
+		chatOutput.setBackground(new Color(245, 255, 250));
+		DefaultCaret caret = (DefaultCaret) chatOutput.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		outputPanel.setLayout(new BorderLayout(0, 0));
+		chatScrollPane = new JScrollPane(chatOutput);
+		outputPanel.add(chatScrollPane);
+
+		JPanel chatSelection = new JPanel();
+		outputPanel.add(chatSelection, BorderLayout.EAST);
+		chatSelection.setLayout(new BoxLayout(chatSelection, BoxLayout.Y_AXIS));
+
+		serverChat = new JRadioButton("Server Chat");
+		buttonGroup.add(serverChat);
+		serverChat.setSelected(true);
+		chatSelection.add(serverChat);
+		serverChat.setPreferredSize(new Dimension(100, 25));
+
+		gameChat = new JRadioButton("Boggle Chat");
+		buttonGroup.add(gameChat);
+		chatSelection.add(gameChat);
 
 		InputMap imap = chatPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 		imap.put(KeyStroke.getKeyStroke("ctrl ENTER"), "addText");
@@ -226,9 +248,20 @@ public class BoggleGUI extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			output.write(JSONConverter.getChatMessage(chatInput.getText()) + "\n");
-			output.flush();
-			System.out.println(JSONConverter.getChatMessage(chatInput.getText()));
+
+			if (serverChat.isSelected()) {
+				output.write(JSONConverter.getServerChatMessage(chatInput.getText()) + "\n");
+				output.flush();
+				addChat(name + ": " + chatInput.getText() + "\n");
+				System.out.println(JSONConverter.getServerChatMessage(chatInput.getText()));
+			} else if (gameChat.isSelected()) {
+				output.write(JSONConverter.getBoggleChatMessage(chatInput.getText()) + "\n");
+				output.flush();
+				System.out.println(JSONConverter.getBoggleChatMessage(chatInput.getText()));
+			} else {
+				addChat("Chat type not specified. Select type and try again");
+			}
+
 			chatInput.setText("");
 		}
 	}

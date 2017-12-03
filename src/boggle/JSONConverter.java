@@ -15,13 +15,20 @@ public class JSONConverter {
 
 	}
 
-	public static String getChatMessage(String message) {
+	public static String getServerChatMessage(String message) {
+		JSONObject chatMessage = new JSONObject();
+		chatMessage.put("type", "chat");
+		chatMessage.put("message", message);
+		return chatMessage.toString();
+	}
+
+	public static String getBoggleChatMessage(String message) {
 
 		JSONObject chatMessage = new JSONObject();
 		chatMessage.put("action", "CHAT");
 		chatMessage.put("message", message);
-		JSONObject wrappedPlayMessage = wrapApplicationMessage(chatMessage);
-		return wrappedPlayMessage.toString();
+		JSONObject wrappedChatMessage = wrapApplicationMessage(chatMessage);
+		return wrappedChatMessage.toString();
 
 	}
 
@@ -78,39 +85,31 @@ public class JSONConverter {
 		return applicationMessage;
 
 	}
-	
+
 	public static String extractChatMessage(JSONObject chatMessage) {
-		
+
 		if (chatMessage.optString("module").equals("Boggle_Of_Epicness")) {
 			return chatMessage.optString("username") + ": " + chatMessage.optString("message");
-		}else if(chatMessage.optString("module").equals("")) {
+		} else if (chatMessage.optString("module").equals("")) {
 			return chatMessage.optString("chatMessage").replace("User", "").trim();
 		}
 		return "Failed to get chat message";
-		
+
 	}
-	
+
 	public static char[] getDieArray(JSONObject gameStartMessage) {
 		String[] tempArray = new String[16];
 		tempArray = gameStartMessage.optString("board").split(",");
-		tempArray[0] = tempArray[0].substring(1); //removes the char [ from the beginning of the string
+		tempArray[0] = tempArray[0].substring(1); // removes the char [ from the beginning of the string
 		char[] dieArray = new char[16];
 		if (tempArray.length == 16) {
-			for(int i = 0; i < tempArray.length; i++) {
-			dieArray[i] = tempArray[i].charAt(1);
+			for (int i = 0; i < tempArray.length; i++) {
+				dieArray[i] = tempArray[i].charAt(1);
 			}
-		}else {
+		} else {
 			System.out.println("Error getting game dice");
 		}
-		
+
 		return dieArray;
 	}
-
-	public static void main(String args[]) {
-		System.out.println(getChatMessage("Hello World"));
-		System.out.println(getPlaytMessage());
-		int[] positions = { 4, 5, 6, 7 };
-		System.out.println(getGuesstMessage(positions));
-	}
-
 }

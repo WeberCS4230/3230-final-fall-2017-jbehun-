@@ -17,7 +17,7 @@ public class BoggleMain {
 
 		if (s.isConnected()) {
 			String name = JOptionPane.showInputDialog("Enter a user name");
-			new BoggleClient(name, s, new BoggleGUI(s));
+			new BoggleClient(name, s, new BoggleGUI(name, s));
 
 		}
 

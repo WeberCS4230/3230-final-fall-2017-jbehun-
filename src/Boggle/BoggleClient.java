@@ -76,25 +76,16 @@ public class BoggleClient {
 					String newMessage = input.readLine();
 					System.out.println(newMessage);
 					if (newMessage != null) {
-						JSONObject appMessage = JSONConverter.getApplicationMessage(newMessage);
-						if (appMessage != null) {
-							switch (appMessage.optString("action")) {
-							case ("CHAT"):
-								gui.addChat(JSONConverter.extractChatMessage(appMessage));
-								break;
-							case ("STARTGAME"):
-								StartGame(appMessage);
-								break;
-							case ("GAMEEND"):
-								gui.stoptGameTimer();
-								break;
-							case ("POINTS"):
-								break;
-							case ("WORD"):
-								break;
-							default:
-								gui.addChat("Failed to get action: " + appMessage + "\n");
-							}
+						JSONObject messageType = new JSONObject(newMessage);
+						switch (messageType.optString("type")) {
+						case ("application"):
+							applicationMessageHandler(newMessage);
+							break;
+						case ("chat"):
+							gui.addChat(messageType.optString("message"));
+							break;
+						default:
+							gui.addChat("Failed to retrieve type\n");
 						}
 					}
 				}
@@ -104,11 +95,34 @@ public class BoggleClient {
 				close();
 			}
 		}
+
+		private void applicationMessageHandler(String newMessage) {
+			JSONObject appMessage = JSONConverter.getApplicationMessage(newMessage);
+			if (appMessage != null) {
+				switch (appMessage.optString("action")) {
+				case ("CHAT"):
+					gui.addChat(JSONConverter.extractChatMessage(appMessage));
+					break;
+				case ("STARTGAME"):
+					StartGame(appMessage);
+					break;
+				case ("GAMEEND"):
+					gui.stoptGameTimer();
+					break;
+				case ("POINTS"):
+					break;
+				case ("WORD"):
+					break;
+				default:
+					gui.addChat("Failed to get action: " + appMessage + "\n");
+				}
+			}
+		}
 	}
-	
+
 	private void StartGame(JSONObject gameStartMessage) {
 		gui.startGameTimer();
-		char [] dieArray = JSONConverter.getDieArray(gameStartMessage);
+		char[] dieArray = JSONConverter.getDieArray(gameStartMessage);
 		gui.setupNewGameBoard(dieArray);
 	}
 
