@@ -107,16 +107,16 @@ public class BoggleGUI extends JFrame {
 		play.addActionListener(new PlayActionListener());
 
 		JPanel guessedWordPanel = new JPanel();
-		guessedWordPanel.setBackground(new Color(176, 224, 230));
+		guessedWordPanel.setBackground(new Color(230, 230, 250));
 		bogglePanel.add(guessedWordPanel, BorderLayout.EAST);
 		guessedWordPanel.setLayout(new BoxLayout(guessedWordPanel, BoxLayout.Y_AXIS));
 
 		JLabel guessedLabel = new JLabel("Guessed Words");
 		guessedLabel.setOpaque(true);
-		guessedLabel.setForeground(Color.BLUE);
+		guessedLabel.setForeground(new Color(0, 0, 205));
 		guessedLabel.setPreferredSize(new Dimension(130, 25));
 		guessedLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		guessedLabel.setBackground(new Color(173, 216, 230));
+		guessedLabel.setBackground(new Color(230, 230, 250));
 		guessedLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
 		guessedLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		guessedWordPanel.add(guessedLabel);
@@ -191,6 +191,7 @@ public class BoggleGUI extends JFrame {
 
 	public void stoptGameTimer() {
 		gameTimer.stop();
+		timerText.setText(String.valueOf(0));
 	}
 
 	private class ChatAction extends AbstractAction {
@@ -205,6 +206,7 @@ public class BoggleGUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			output.write(JSONConverter.getChatMessage(chatInput.getText()) + "\n");
 			output.flush();
+			System.out.println(JSONConverter.getChatMessage(chatInput.getText()));
 			chatInput.setText("");
 		}
 	}

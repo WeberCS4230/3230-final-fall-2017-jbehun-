@@ -63,6 +63,7 @@ public class BoggleClient {
 	private class InputHandler implements Runnable {
 
 		private BufferedReader input;
+		private int points;
 
 		public InputHandler(BufferedReader inputStream) {
 			input = inputStream;
@@ -75,11 +76,11 @@ public class BoggleClient {
 					String newMessage = input.readLine();
 					System.out.println(newMessage);
 					if (newMessage != null) {
-						JSONObject action = JSONConverter.getApplicationMessage(newMessage);
-						if (action != null) {
-							switch (action.optString("action")) {
+						JSONObject appMessage = JSONConverter.getApplicationMessage(newMessage);
+						if (appMessage != null) {
+							switch (appMessage.optString("action")) {
 							case ("CHAT"):
-								gui.addChat(action.optString("chatMessage") + "\n");
+								gui.addChat(JSONConverter.extractChatMessage(appMessage));
 								break;
 							case ("STARTGAME"):
 								gui.startGameTimer();
@@ -92,7 +93,7 @@ public class BoggleClient {
 							case ("WORD"):
 								break;
 							default:
-								gui.addChat("Failed to get action: " + action + "\n");
+								gui.addChat("Failed to get action: " + appMessage + "\n");
 							}
 						}
 					}
