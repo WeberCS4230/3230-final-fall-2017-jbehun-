@@ -171,6 +171,8 @@ public class BoggleGUI extends JFrame {
 
 		for (int i = 0; i < 16; i++) {
 			GameDie button = new GameDie(i);
+			button.setFont(new Font("Tahoma", Font.PLAIN, 25));
+			button.setForeground(Color.WHITE);
 			gameBoard.add(button);
 			gameDice[i] = button;
 		}
@@ -192,6 +194,15 @@ public class BoggleGUI extends JFrame {
 	public void stoptGameTimer() {
 		gameTimer.stop();
 		timerText.setText(String.valueOf(0));
+	}
+	
+	public void setupNewGameBoard(char [] charArray) {
+		
+		if (charArray.length == 16) {
+			for(int i = 0; i < charArray.length; i++) {
+				gameDice[i].setText(String.valueOf(charArray[i]));
+			}
+		}
 	}
 
 	private class ChatAction extends AbstractAction {

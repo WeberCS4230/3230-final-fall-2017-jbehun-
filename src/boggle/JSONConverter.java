@@ -89,6 +89,22 @@ public class JSONConverter {
 		return "Failed to get chat message";
 		
 	}
+	
+	public static char[] getDieArray(JSONObject gameStartMessage) {
+		String[] tempArray = new String[16];
+		tempArray = gameStartMessage.optString("board").split(",");
+		tempArray[0] = tempArray[0].substring(1); //removes the char [ from the beginning of the string
+		char[] dieArray = new char[16];
+		if (tempArray.length == 16) {
+			for(int i = 0; i < tempArray.length; i++) {
+			dieArray[i] = tempArray[i].charAt(1);
+			}
+		}else {
+			System.out.println("Error getting game dice");
+		}
+		
+		return dieArray;
+	}
 
 	public static void main(String args[]) {
 		System.out.println(getChatMessage("Hello World"));
@@ -96,4 +112,5 @@ public class JSONConverter {
 		int[] positions = { 4, 5, 6, 7 };
 		System.out.println(getGuesstMessage(positions));
 	}
+
 }

@@ -83,7 +83,7 @@ public class BoggleClient {
 								gui.addChat(JSONConverter.extractChatMessage(appMessage));
 								break;
 							case ("STARTGAME"):
-								gui.startGameTimer();
+								StartGame(appMessage);
 								break;
 							case ("GAMEEND"):
 								gui.stoptGameTimer();
@@ -104,6 +104,12 @@ public class BoggleClient {
 				close();
 			}
 		}
+	}
+	
+	private void StartGame(JSONObject gameStartMessage) {
+		gui.startGameTimer();
+		char [] dieArray = JSONConverter.getDieArray(gameStartMessage);
+		gui.setupNewGameBoard(dieArray);
 	}
 
 }
