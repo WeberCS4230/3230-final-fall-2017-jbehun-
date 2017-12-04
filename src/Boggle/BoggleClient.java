@@ -63,7 +63,7 @@ public class BoggleClient {
 	private class InputHandler implements Runnable {
 
 		private BufferedReader input;
-		private int points;
+		private int points = 0;
 
 		public InputHandler(BufferedReader inputStream) {
 			input = inputStream;
@@ -82,7 +82,7 @@ public class BoggleClient {
 							applicationMessageHandler(newMessage);
 							break;
 						case ("chat"):
-							gui.addChat(messageType.optString("message"));
+							gui.addChat(messageType.optString("fromUser") + ":  " + messageType.optString("message"));
 							break;
 						default:
 							gui.addChat("Failed to retrieve type\n");
@@ -110,20 +110,31 @@ public class BoggleClient {
 					gui.stoptGameTimer();
 					break;
 				case ("POINTS"):
+					addPoints(appMessage);
 					break;
 				case ("WORD"):
+					gui.addGuessedWord(appMessage.optString("word"));
 					break;
 				default:
 					gui.addChat("Failed to get action: " + appMessage + "\n");
 				}
 			}
 		}
-	}
 
-	private void StartGame(JSONObject gameStartMessage) {
-		gui.startGameTimer();
-		char[] dieArray = JSONConverter.getDieArray(gameStartMessage);
-		gui.setupNewGameBoard(dieArray);
+		private void addPoints(JSONObject appMessage) {
+			String p = appMessage.optString("points");
+			points += Integer.parseInt(p);
+			gui.addChat(name + ": earned " + p + " point(s)\n");
+			gui.updatePoints(points);
+		}
+
+		private void StartGame(JSONObject gameStartMessage) {
+			gui.startGameTimer();
+			char[] dieArray = JSONConverter.getDieArray(gameStartMessage);
+			gui.setupNewGameBoard(dieArray);
+			points = 0;
+			gui.updatePoints(points);
+		}
 	}
 
 }

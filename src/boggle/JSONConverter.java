@@ -87,7 +87,7 @@ public class JSONConverter {
 	}
 
 	public static String extractChatMessage(JSONObject chatMessage) {
-
+		
 		if (chatMessage.optString("module").equals("Boggle_Of_Epicness")) {
 			return chatMessage.optString("username") + ": " + chatMessage.optString("message");
 		} else if (chatMessage.optString("module").equals("")) {

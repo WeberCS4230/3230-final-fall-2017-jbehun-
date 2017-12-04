@@ -8,15 +8,16 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.text.DefaultCaret;
+import org.eclipse.wb.swing.FocusTraversalOnArray;
 
 public class BoggleGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JLabel timerText;
+	private JLabel timerText, pointsText;
 	private JTextField wordGuessed;
 	private JButton[] gameDice = new GameDie[16];
 	private Socket socket;
-	private JTextArea chatOutput, chatInput;
+	private JTextArea chatOutput, chatInput, guessedWords;
 	private Timer gameTimer;
 	private int timer;
 	private String name;
@@ -43,7 +44,7 @@ public class BoggleGUI extends JFrame {
 		gameTimer = new Timer(1000, new GameTimer());
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(200, 200, 569, 583);
+		setBounds(200, 200, 569, 704);
 		JPanel mainPanel = new JPanel();
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(mainPanel);
@@ -133,15 +134,16 @@ public class BoggleGUI extends JFrame {
 		ScrollPane guessedWordScrollPane = new ScrollPane();
 		guessedWordPanel.add(guessedWordScrollPane);
 
-		JTextArea guessedWords = new JTextArea();
+		guessedWords = new JTextArea();
+		guessedWords.setFont(new Font("Monospaced", Font.PLAIN, 18));
 		guessedWords.setPreferredSize(new Dimension(120, 22));
 		guessedWords.setEditable(false);
 		guessedWordScrollPane.add(guessedWords);
 
 		JPanel chatPanel = new JPanel();
-		chatPanel.setBounds(0, 297, 546, 237);
-		mainPanel.add(chatPanel);
+		chatPanel.setBounds(0, 297, 546, 361);
 		chatPanel.setLayout(new BorderLayout(0, 0));
+		mainPanel.add(chatPanel);
 
 		JScrollPane chatScrollPane;
 
@@ -183,6 +185,23 @@ public class BoggleGUI extends JFrame {
 		JPanel chatSelection = new JPanel();
 		outputPanel.add(chatSelection, BorderLayout.EAST);
 		chatSelection.setLayout(new BoxLayout(chatSelection, BoxLayout.Y_AXIS));
+
+		JLabel pointTitle = new JLabel("Points");
+		pointTitle.setBorder(new LineBorder(new Color(0, 0, 0)));
+		pointTitle.setMaximumSize(new Dimension(100, 25));
+		pointTitle.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		pointTitle.setPreferredSize(new Dimension(100, 25));
+		pointTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		chatSelection.add(pointTitle);
+		chatSelection.setFocusTraversalPolicy(
+				new FocusTraversalOnArray(new Component[] { pointTitle, serverChat, gameChat }));
+
+		pointsText = new JLabel("0");
+		pointsText.setBorder(new LineBorder(new Color(0, 0, 0)));
+		pointsText.setMaximumSize(new Dimension(100, 50));
+		pointsText.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		pointsText.setHorizontalAlignment(SwingConstants.CENTER);
+		chatSelection.add(pointsText);
 
 		serverChat = new JRadioButton("Server Chat");
 		buttonGroup.add(serverChat);
@@ -226,6 +245,14 @@ public class BoggleGUI extends JFrame {
 	public void stoptGameTimer() {
 		gameTimer.stop();
 		timerText.setText(String.valueOf(0));
+	}
+
+	public void updatePoints(int points) {
+		pointsText.setText(String.valueOf(points));
+	}
+
+	public void addGuessedWord(String word) {
+		guessedWords.append(" " + word + "\n");
 	}
 
 	public void setupNewGameBoard(char[] charArray) {
@@ -276,6 +303,7 @@ public class BoggleGUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			output.write(JSONConverter.getPlaytMessage() + "\n");
 			output.flush();
+			guessedWords.setText("");
 		}
 
 	}
