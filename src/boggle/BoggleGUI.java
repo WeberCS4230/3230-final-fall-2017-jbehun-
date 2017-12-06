@@ -8,14 +8,13 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.text.DefaultCaret;
-import org.eclipse.wb.swing.FocusTraversalOnArray;
 
 public class BoggleGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel timerText, pointsText;
 	private JTextField wordGuessed;
-	private JButton[] gameDice = new GameDie[16];
+	private GameDie[] gameDice = new GameDie[16];
 	private Socket socket;
 	private JTextArea chatOutput, chatInput, guessedWords;
 	private Timer gameTimer;
@@ -24,6 +23,7 @@ public class BoggleGUI extends JFrame {
 	private PrintWriter output;
 	private ArrayList<Integer> positionList = new ArrayList<Integer>();
 	private JRadioButton serverChat, gameChat;
+	private Dictionary dictionary;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	/**
@@ -33,7 +33,8 @@ public class BoggleGUI extends JFrame {
 
 		socket = s;
 		name = n;
-
+		dictionary = new Dictionary();
+		
 		try {
 			output = new PrintWriter(socket.getOutputStream());
 		} catch (IOException e) {
@@ -193,8 +194,6 @@ public class BoggleGUI extends JFrame {
 		pointTitle.setPreferredSize(new Dimension(100, 25));
 		pointTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		chatSelection.add(pointTitle);
-		chatSelection.setFocusTraversalPolicy(
-				new FocusTraversalOnArray(new Component[] { pointTitle, serverChat, gameChat }));
 
 		pointsText = new JLabel("0");
 		pointsText.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -317,13 +316,25 @@ public class BoggleGUI extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int[] positions = new int[positionList.size()];
+			StringBuilder word = new StringBuilder();
 			for (int i = 0; i < positions.length; i++) {
 				positions[i] = positionList.get(i);
+				word.append(gameDice[positions[i]].getLetter());
 			}
+			
+			if(dictionary.isAdjancentWord(positions) && dictionary.isValidWord(word.toString())) {
 			output.write(JSONConverter.getGuesstMessage(positions) + "\n");
 			output.flush();
+			}else {
+				chatOutput.append("Guessed word is invalid \n");
+			}
+			
 			positionList.clear();
 			wordGuessed.setText("");
+			
+			for (int i = 0; i < gameDice.length; i++) {
+				gameDice[i].setEnabled(true);;
+			}
 		}
 
 	}
@@ -335,6 +346,7 @@ public class BoggleGUI extends JFrame {
 			GameDie currentDie = (GameDie) arg0.getSource();
 			positionList.add(currentDie.getPosition());
 			wordGuessed.setText(wordGuessed.getText() + currentDie.getLetter());
+			currentDie.setEnabled(false);
 		}
 
 	}
@@ -346,6 +358,9 @@ public class BoggleGUI extends JFrame {
 
 			timer--;
 			timerText.setText(String.valueOf(timer));
+			if (timer <= 0) {
+				stoptGameTimer();
+			}
 		}
 	}
 }
