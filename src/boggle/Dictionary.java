@@ -9,17 +9,24 @@ public class Dictionary {
 
 	public Dictionary() {
 
-		Scanner input;
+		InputStream in;
+		BufferedReader input;
 		dictionary = new ArrayList<String>();
 		try {
-			input = new Scanner(new FileReader("dictionary.txt"));
-			while (input.hasNext()) {
-				dictionary.add(input.next());
+			in = Dictionary.class.getResourceAsStream("/dictionary.txt");
+			System.out.println(in != null);
+			input = new BufferedReader(new InputStreamReader(in));
+			while (input.ready()) {
+				dictionary.add(input.readLine());
 			}
 			input.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("Failed to read in dictionary");
 			e.printStackTrace();
+		} catch (IOException io) {
+			System.out.println("Failed to open buffered reader");
+			io.printStackTrace();
+
 		}
 	}
 
@@ -27,52 +34,55 @@ public class Dictionary {
 		word = word.toUpperCase();
 		return dictionary.contains(word);
 	}
-	
+
 	public boolean isAdjancentWord(int[] positions) {
-		
-		int[] mid = {0,1,2,4,6,8,9,10};
-		int[] rightSide = {0,1,4,8,9};
-		int[] leftSide = {1,2,6,9,10};
+
+		int[] mid = { 0, 1, 2, 4, 6, 8, 9, 10 };
+		int[] rightSide = { 0, 1, 4, 8, 9 };
+		int[] leftSide = { 1, 2, 6, 9, 10 };
 		boolean adjacent = true;
-		
-		for(int i =0; i < positions.length - 1; i++) {
+
+		for (int i = 0; i < positions.length - 1; i++) {
 			int diff = positions[i + 1] - positions[i] + 5;
-			
+
 			switch (positions[i] % 4) {
-			
-			case 0: adjacent = isPositionsAdjecent(diff, leftSide);
+
+			case 0:
+				adjacent = isPositionsAdjecent(diff, leftSide);
 				break;
-				
-			case 3: adjacent = isPositionsAdjecent(diff, rightSide);	
+
+			case 3:
+				adjacent = isPositionsAdjecent(diff, rightSide);
 				break;
-			default: adjacent = isPositionsAdjecent(diff, mid);
+			default:
+				adjacent = isPositionsAdjecent(diff, mid);
 			}
-			
+
 			if (adjacent == false) {
 				return false;
 			}
 		}
-		
-		return true;	
+
+		return true;
 	}
-	
+
 	private boolean isPositionsAdjecent(int diff, int[] validValues) {
 		boolean inArray = false;
-		
-		for(int i = 0; i < validValues.length; i++) {
-			if(diff == validValues[i]) {
+
+		for (int i = 0; i < validValues.length; i++) {
+			if (diff == validValues[i]) {
 				inArray = true;
 			}
 		}
-		
+
 		return inArray;
 	}
 
 	public static void main(String[] args) {
 		Dictionary dictionary = new Dictionary();
 		System.out.println(dictionary.isValidWord("moon"));
-		
-		int[] array = {13,14,15};
+
+		int[] array = { 13, 14, 15 };
 		System.out.println(dictionary.isAdjancentWord(array));
 
 	}

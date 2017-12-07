@@ -34,7 +34,7 @@ public class BoggleGUI extends JFrame {
 		socket = s;
 		name = n;
 		dictionary = new Dictionary();
-		
+
 		try {
 			output = new PrintWriter(socket.getOutputStream());
 		} catch (IOException e) {
@@ -45,7 +45,7 @@ public class BoggleGUI extends JFrame {
 		gameTimer = new Timer(1000, new GameTimer());
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(200, 200, 569, 704);
+		setBounds(50, 50, 569, 704);
 		JPanel mainPanel = new JPanel();
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(mainPanel);
@@ -321,19 +321,20 @@ public class BoggleGUI extends JFrame {
 				positions[i] = positionList.get(i);
 				word.append(gameDice[positions[i]].getLetter());
 			}
-			
-			if(dictionary.isAdjancentWord(positions) && dictionary.isValidWord(word.toString())) {
-			output.write(JSONConverter.getGuesstMessage(positions) + "\n");
-			output.flush();
-			}else {
+
+			if (dictionary.isAdjancentWord(positions) && dictionary.isValidWord(word.toString())) {
+				output.write(JSONConverter.getGuesstMessage(positions) + "\n");
+				output.flush();
+			} else {
 				chatOutput.append("Guessed word is invalid \n");
 			}
-			
+
 			positionList.clear();
 			wordGuessed.setText("");
-			
+
 			for (int i = 0; i < gameDice.length; i++) {
-				gameDice[i].setEnabled(true);;
+				gameDice[i].setEnabled(true);
+				;
 			}
 		}
 

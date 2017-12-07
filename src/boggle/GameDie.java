@@ -4,8 +4,8 @@ import java.awt.Color;
 
 import javax.swing.*;
 
-public class GameDie extends JButton{
-	
+public class GameDie extends JButton {
+
 	private static final long serialVersionUID = 1L;
 	private int position;
 	private char letter;
@@ -32,6 +32,5 @@ public class GameDie extends JButton{
 	public String toString() {
 		return "GameDice [position=" + position + ", letter=" + letter + "]";
 	}
-	
-	
+
 }

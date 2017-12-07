@@ -132,6 +132,7 @@ public class BoggleClient {
 			gui.startGameTimer();
 			char[] dieArray = JSONConverter.getDieArray(gameStartMessage);
 			gui.setupNewGameBoard(dieArray);
+			gui.addChat("Game started! Go!");
 			points = 0;
 			gui.updatePoints(points);
 		}
