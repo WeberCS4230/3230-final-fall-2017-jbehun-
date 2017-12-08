@@ -118,9 +118,10 @@ public class BoggleGUI extends JFrame {
 		play.addActionListener(new PlayActionListener());
 
 		JPanel guessedWordPanel = new JPanel();
+		guessedWordPanel.setPreferredSize(new Dimension(125, 500));
 		guessedWordPanel.setBackground(new Color(230, 230, 250));
 		bogglePanel.add(guessedWordPanel, BorderLayout.EAST);
-		guessedWordPanel.setLayout(new BoxLayout(guessedWordPanel, BoxLayout.Y_AXIS));
+		guessedWordPanel.setLayout(new BorderLayout(0, 0));
 
 		JLabel guessedLabel = new JLabel("Guessed Words");
 		guessedLabel.setOpaque(true);
@@ -130,16 +131,18 @@ public class BoggleGUI extends JFrame {
 		guessedLabel.setBackground(new Color(230, 230, 250));
 		guessedLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
 		guessedLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		guessedWordPanel.add(guessedLabel);
+		guessedWordPanel.add(guessedLabel, BorderLayout.NORTH);
 
-		ScrollPane guessedWordScrollPane = new ScrollPane();
-		guessedWordPanel.add(guessedWordScrollPane);
-
+		JScrollPane guessedWordScrollPane;
 		guessedWords = new JTextArea();
 		guessedWords.setFont(new Font("Monospaced", Font.PLAIN, 18));
-		guessedWords.setPreferredSize(new Dimension(120, 22));
 		guessedWords.setEditable(false);
-		guessedWordScrollPane.add(guessedWords);
+		guessedWords.setAutoscrolls(true);
+
+		guessedWordScrollPane = new JScrollPane(guessedWords);
+		guessedWordScrollPane.setPreferredSize(new Dimension(122, 250));
+		guessedWordScrollPane.setAutoscrolls(true);
+		guessedWordPanel.add(guessedWordScrollPane);
 
 		JPanel chatPanel = new JPanel();
 		chatPanel.setBounds(0, 297, 546, 361);
@@ -204,11 +207,11 @@ public class BoggleGUI extends JFrame {
 
 		serverChat = new JRadioButton("Server Chat");
 		buttonGroup.add(serverChat);
-		serverChat.setSelected(true);
 		chatSelection.add(serverChat);
 		serverChat.setPreferredSize(new Dimension(100, 25));
 
 		gameChat = new JRadioButton("Boggle Chat");
+		gameChat.setSelected(true);
 		buttonGroup.add(gameChat);
 		chatSelection.add(gameChat);
 
@@ -239,6 +242,7 @@ public class BoggleGUI extends JFrame {
 		gameTimer.start();
 		timer = 60;
 		timerText.setText(String.valueOf(timer));
+		guessedWords.setText("");
 	}
 
 	public void stoptGameTimer() {
@@ -302,7 +306,6 @@ public class BoggleGUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			output.write(JSONConverter.getPlaytMessage() + "\n");
 			output.flush();
-			guessedWords.setText("");
 		}
 
 	}
@@ -323,8 +326,9 @@ public class BoggleGUI extends JFrame {
 			}
 
 			if (dictionary.isAdjancentWord(positions) && dictionary.isValidWord(word.toString())) {
-				output.write(JSONConverter.getGuesstMessage(positions) + "\n");
+				output.write(JSONConverter.getGuessMessage(positions) + "\n");
 				output.flush();
+				System.out.println(JSONConverter.getGuessMessage(positions) + "\n");
 			} else {
 				chatOutput.append("Guessed word is invalid \n");
 			}

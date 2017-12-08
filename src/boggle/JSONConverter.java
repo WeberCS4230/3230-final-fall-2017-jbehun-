@@ -26,7 +26,7 @@ public class JSONConverter {
 
 		JSONObject chatMessage = new JSONObject();
 		chatMessage.put("action", "CHAT");
-		chatMessage.put("message", message);
+		chatMessage.put("chatMessage", message);
 		JSONObject wrappedChatMessage = wrapApplicationMessage(chatMessage);
 		return wrappedChatMessage.toString();
 
@@ -41,7 +41,7 @@ public class JSONConverter {
 
 	}
 
-	public static String getGuesstMessage(int[] positions) {
+	public static String getGuessMessage(int[] positions) {
 
 		JSONObject guessMessage = new JSONObject();
 		guessMessage.put("action", "GUESS");
@@ -89,7 +89,7 @@ public class JSONConverter {
 	public static String extractChatMessage(JSONObject chatMessage) {
 
 		if (chatMessage.optString("module").equals("Boggle_Of_Epicness")) {
-			return chatMessage.optString("username") + ": " + chatMessage.optString("message");
+			return chatMessage.optString("username") + ": " + chatMessage.optString("chatMessage");
 		} else if (chatMessage.optString("module").equals("")) {
 			return chatMessage.optString("chatMessage").replace("User", "").trim();
 		}
